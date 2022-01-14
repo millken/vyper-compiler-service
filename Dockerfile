@@ -5,5 +5,6 @@ RUN mkdir /usr/src/myapp -p
 COPY . /usr/src/myapp
 WORKDIR /usr/src/myapp
 RUN pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN rm -rf vyper
 RUN sh ./download_compiler.sh
 CMD [ "python", "server.py"]
