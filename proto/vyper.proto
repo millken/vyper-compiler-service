@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+// pip3 install grpcio-tools
+// python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. ./vyper.proto
+// protoc -I. --go_out=. --go-grpc_out . ./vyper.proto
+
+package iotex;
+
+option go_package = "./iotex";
+
+message VyperRequest {
+    string version = 1;
+    VyperSource source = 2;
+    string verifyBytecode = 3;
+}
+
+message VyperResponse {
+     bool compileOK = 1;
+     bool verifyOK = 2;
+     string content = 3;
+}
+
+message VyperSource {
+    string name = 1;
+    string content = 2;
+}
+
+service Vyper {
+    rpc compiler(VyperRequest) returns (VyperResponse) {};
+  }
