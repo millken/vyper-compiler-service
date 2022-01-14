@@ -1,4 +1,5 @@
 from concurrent import futures
+import json
 import logging
 import os,sys
 from proto import vyper_pb2,vyper_pb2_grpc
@@ -38,9 +39,9 @@ class VyperCompilerServicer(vyper_pb2_grpc.VyperServicer):
         sys.path.pop(0)
 
         try:
-            compileRes = compile_code(source.content, ['abi', 'bytecode', 'bytecode_runtime', 'ir', 'method_identifiers'])
-            compileRes['ir'] = str(compileRes['ir'])
+            compileRes = compile_code(source.content, ['abi', 'bytecode', 'bytecode_runtime', 'method_identifiers'])
         except VyperException as e:
+            logging.debug('vyper exception: %s', str(e))
             return vyper_pb2.VyperResponse(content=str(e))
         
         vr = vyper_pb2.VyperResponse(compileOK=True)
@@ -50,7 +51,7 @@ class VyperCompilerServicer(vyper_pb2_grpc.VyperServicer):
                 verify_code = '0x' + verify_code
             if compileRes['bytecode_runtime'] == verify_code:
                 vr.verifyOK = True
-        vr.content = str(compileRes)
+        vr.content = json.dumps(compileRes)
         return vr
 
 
